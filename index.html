@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word to PDF Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+    #uploadForm { margin-top: 50px; }
+    #downloadLink { display: none; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Convert Word to PDF</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".doc,.docx" required />
+    <button type="submit">Convert to PDF</button>
+  </form>
+  <div id="downloadLink">
+    <p>Conversion successful!</p>
+    <a id="pdfLink" href="#" download="converted.pdf">Download PDF</a>
+  </div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const downloadLink = document.getElementById("downloadLink");
+    const pdfLink = document.getElementById("pdfLink");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("/convert", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          pdfLink.href = url;
+          downloadLink.style.display = "block";
+        } else {
+          alert("Conversion failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
