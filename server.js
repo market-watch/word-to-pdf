@@ -7,8 +7,12 @@ const path = require("path");
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
-app.use(express.static("public"));
+// Serve index.html from root URL
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
+// Convert Word to PDF on POST request
 app.post("/convert", upload.single("file"), (req, res) => {
   const filePath = req.file.path;
   const outputPath = path.join("uploads", `${req.file.filename}.pdf`);
@@ -32,4 +36,5 @@ app.post("/convert", upload.single("file"), (req, res) => {
   });
 });
 
+// Start the server (only necessary if running locally)
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
