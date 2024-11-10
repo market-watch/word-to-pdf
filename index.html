@@ -6,7 +6,6 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7497119140124063"
      crossorigin="anonymous"></script>
 
-  
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HW5BLF7ZDS"></script>
   <script>
@@ -33,10 +32,10 @@
       max-width: 600px;
       width: 100%;
     }
-    #uploadForm, #mergeForm {
+    #uploadForm, #mergeForm, #gstForm {
       margin-top: 50px;
     }
-    #downloadLink, #mergeDownloadLink {
+    #downloadLink, #mergeDownloadLink, #gstDownloadLink {
       display: none;
       margin-top: 20px;
     }
@@ -90,7 +89,6 @@
         <label class="label">Upload Excel Files (.xls, .xlsx)</label>
         <div class="control">
           <input class="input" type="file" name="files" accept=".xls,.xlsx" multiple required />
-
         </div>
       </div>
       <div class="control">
@@ -114,6 +112,39 @@
     <div id="mergeErrorMessage" style="display: none; color: red;">
       <p>There was an error with the merging. Please try again.</p>
     </div>
+
+    <!-- GST API functionality section -->
+    <h1 class="title has-text-centered">GST API Functionality</h1>
+
+    <!-- File upload form for GST processing -->
+    <form id="gstForm" enctype="multipart/form-data" class="box">
+      <div class="field">
+        <label class="label">Upload Excel Files for GST Processing (.xls, .xlsx)</label>
+        <div class="control">
+          <input class="input" type="file" name="gstFile" accept=".xls,.xlsx" required />
+        </div>
+      </div>
+      <div class="control">
+        <button class="button is-link is-fullwidth" type="submit">Process GST Data</button>
+      </div>
+    </form>
+
+    <!-- Loader animation for GST processing -->
+    <div id="gstLoader" class="loader has-text-centered">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
+
+    <!-- Download link for processed GST file -->
+    <div id="gstDownloadLink">
+      <p>GST Processing successful! Click the link below to download your processed GST file.</p>
+      <a id="gstFileLink" class="button is-primary" href="#" download="processed-gst.xlsx">Download Processed GST File</a>
+    </div>
+
+    <!-- Error message for GST processing -->
+    <div id="gstErrorMessage" style="display: none; color: red;">
+      <p>There was an error with the GST processing. Please try again.</p>
+    </div>
   </div>
 
   <script>
@@ -128,6 +159,12 @@
     const mergedFileLink = document.getElementById("mergedFileLink");
     const mergeLoader = document.getElementById("mergeLoader");
     const mergeErrorMessage = document.getElementById("mergeErrorMessage");
+
+    const gstForm = document.getElementById("gstForm");
+    const gstDownloadLink = document.getElementById("gstDownloadLink");
+    const gstFileLink = document.getElementById("gstFileLink");
+    const gstLoader = document.getElementById("gstLoader");
+    const gstErrorMessage = document.getElementById("gstErrorMessage");
 
     // DOCX to PDF form submission
     form.addEventListener("submit", async (event) => {
@@ -192,11 +229,39 @@
         mergeLoader.style.display = "none";
       }
     });
+
+    // GST file processing form submission
+    gstForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(gstForm);
+
+      // Show loader
+      gstLoader.style.display = "block";
+      gstDownloadLink.style.display = "none";
+      gstErrorMessage.style.display = "none";
+
+      try {
+        const response = await fetch("/process-gst", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          gstFileLink.href = url;
+          gstDownloadLink.style.display = "block";
+        } else {
+          gstErrorMessage.style.display = "block";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        gstErrorMessage.style.display = "block";
+      } finally {
+        gstLoader.style.display = "none";
+      }
+    });
   </script>
 
-  <!-- Footer -->
-    <footer class="footer">
-        <p>© Dheeraj Bhyan. All Rights Reserved.</p>
-    </footer>
 </body>
 </html>
