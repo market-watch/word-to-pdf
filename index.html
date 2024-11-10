@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Word to PDF Converter</title>
+  <title>File Converter</title>
   <!-- Bulma CSS for minimal theme -->
   <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" rel="stylesheet">
   <style>
@@ -19,10 +19,10 @@
       max-width: 600px;
       width: 100%;
     }
-    #uploadForm {
+    #uploadForm, #mergeForm {
       margin-top: 50px;
     }
-    #downloadLink {
+    #downloadLink, #mergeDownloadLink {
       display: none;
       margin-top: 20px;
     }
@@ -37,7 +37,7 @@
   <div class="container">
     <h1 class="title has-text-centered">Convert Word to PDF</h1>
 
-    <!-- File upload form -->
+    <!-- File upload form for DOCX to PDF conversion -->
     <form id="uploadForm" enctype="multipart/form-data" class="box">
       <div class="field">
         <label class="label">Upload Word File (.doc, .docx)</label>
@@ -50,21 +50,54 @@
       </div>
     </form>
 
-    <!-- Loader animation -->
+    <!-- Loader animation for DOCX conversion -->
     <div id="loader" class="loader has-text-centered">
       <div class="spinner"></div>
       <p>Converting...</p>
     </div>
 
-    <!-- Download link -->
+    <!-- Download link for DOCX conversion -->
     <div id="downloadLink">
       <p>Conversion successful! Click the link below to download your PDF.</p>
       <a id="pdfLink" class="button is-primary" href="#" download="converted.pdf">Download PDF</a>
     </div>
 
-    <!-- Error message -->
+    <!-- Error message for DOCX conversion -->
     <div id="errorMessage" style="display: none; color: red;">
       <p>There was an error with the conversion. Please try again.</p>
+    </div>
+
+    <!-- Excel files merging section -->
+    <h1 class="title has-text-centered">Merge Excel Files</h1>
+
+    <!-- File upload form for merging Excel files -->
+    <form id="mergeForm" enctype="multipart/form-data" class="box">
+      <div class="field">
+        <label class="label">Upload Excel Files (.xls, .xlsx)</label>
+        <div class="control">
+          <input class="input" type="file" name="files" accept=".xls,.xlsx" multiple required />
+        </div>
+      </div>
+      <div class="control">
+        <button class="button is-link is-fullwidth" type="submit">Merge Excel Files</button>
+      </div>
+    </form>
+
+    <!-- Loader animation for Excel merging -->
+    <div id="mergeLoader" class="loader has-text-centered">
+      <div class="spinner"></div>
+      <p>Merging...</p>
+    </div>
+
+    <!-- Download link for merged Excel file -->
+    <div id="mergeDownloadLink">
+      <p>Merge successful! Click the link below to download your merged Excel file.</p>
+      <a id="mergedFileLink" class="button is-primary" href="#" download="merged.xlsx">Download Merged File</a>
+    </div>
+
+    <!-- Error message for Excel merging -->
+    <div id="mergeErrorMessage" style="display: none; color: red;">
+      <p>There was an error with the merging. Please try again.</p>
     </div>
   </div>
 
@@ -75,6 +108,13 @@
     const loader = document.getElementById("loader");
     const errorMessage = document.getElementById("errorMessage");
 
+    const mergeForm = document.getElementById("mergeForm");
+    const mergeDownloadLink = document.getElementById("mergeDownloadLink");
+    const mergedFileLink = document.getElementById("mergedFileLink");
+    const mergeLoader = document.getElementById("mergeLoader");
+    const mergeErrorMessage = document.getElementById("mergeErrorMessage");
+
+    // DOCX to PDF form submission
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
@@ -103,6 +143,38 @@
         errorMessage.style.display = "block";
       } finally {
         loader.style.display = "none";
+      }
+    });
+
+    // Excel merging form submission
+    mergeForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(mergeForm);
+
+      // Show loader
+      mergeLoader.style.display = "block";
+      mergeDownloadLink.style.display = "none";
+      mergeErrorMessage.style.display = "none";
+
+      try {
+        const response = await fetch("/merge-excel", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          mergedFileLink.href = url;
+          mergeDownloadLink.style.display = "block";
+        } else {
+          mergeErrorMessage.style.display = "block";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        mergeErrorMessage.style.display = "block";
+      } finally {
+        mergeLoader.style.display = "none";
       }
     });
   </script>
