@@ -1,7 +1,7 @@
 {
-  "name": "word-to-pdf-converter",
-  "version": "1.0.0",
-  "description": "A Node.js application to convert Word documents to PDF",
+  "name": "file-converter",
+  "version": "1.1.0",
+  "description": "A Node.js application to convert Word documents to PDF and merge Excel files",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "^4.18.1",
     "multer": "^1.4.4",
-    "libreoffice-convert": "^1.5.0"
+    "libreoffice-convert": "^1.5.0",
+    "exceljs": "^4.3.0"  // Added exceljs for handling Excel files
   }
 }
