@@ -36,4 +36,10 @@ app.post("/convert", upload.single("file"), (req, res) => {
   });
 });
 
+// Listen on the port defined by the environment variable (for Cloud Run)
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
 module.exports = app;
