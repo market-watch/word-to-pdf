@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const libre = require("libreoffice-convert");
-const XLSX = require("xlsx");
+const ExcelJS = require('exceljs');
 const fs = require("fs");
 const path = require("path");
 
@@ -43,40 +43,39 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-// Excel files merging route
-app.post("/merge-excel", upload.array("files"), (req, res) => {
+app.post("/merge-excel", upload.array("files"), async (req, res) => {
   try {
-    const workbooks = req.files.map((file) => {
-      const filePath = file.path;
-      const workbook = XLSX.readFile(filePath);
-      fs.unlinkSync(filePath); // Clean up each uploaded file after reading
-      return workbook;
-    });
+    const workbooks = await Promise.all(
+      req.files.map(async (file) => {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(file.path);
+        return workbook;
+      })
+    );
 
-    // Create a new workbook for the merged content
-    const mergedWorkbook = XLSX.utils.book_new();
+    const mergedWorkbook = new ExcelJS.Workbook();
+    const mergedSheet = mergedWorkbook.addWorksheet("Merged Data");
 
-    // Append each file's sheets into the merged workbook
-    workbooks.forEach((workbook, index) => {
-      workbook.SheetNames.forEach((sheetName) => {
-        const sheetData = workbook.Sheets[sheetName];
-        XLSX.utils.book_append_sheet(mergedWorkbook, sheetData, `${sheetName}_${index + 1}`);
+    workbooks.forEach((workbook) => {
+      workbook.eachSheet((sheet) => {
+        sheet.eachRow((row, rowIndex) => {
+          mergedSheet.addRow(row.values);
+        });
       });
     });
 
-    // Save merged workbook to a temporary file
     const outputPath = path.join("/tmp", "merged.xlsx");
-    XLSX.writeFile(mergedWorkbook, outputPath);
+    await mergedWorkbook.xlsx.writeFile(outputPath);
 
-    // Send the merged file to the client
-    res.download(outputPath, "merged.xlsx", (err) => {
-      if (err) res.status(500).send("File download error: " + err.message);
-      fs.unlinkSync(outputPath); // Clean up the merged file
+    res.download(outputPath, "merged.xlsx", () => {
+      req.files.forEach((file) => fs.unlinkSync(file.path));
+      fs.unlinkSync(outputPath);
     });
-  } catch (err) {
-    console.error("Error merging files:", err);
-    res.status(500).send("Error merging Excel files");
+  } catch (error) {
+    res.status(500).send("Error merging files: " + error.message);
   }
 });
+
+
 
 module.exports = app;
