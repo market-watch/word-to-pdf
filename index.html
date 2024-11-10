@@ -4,31 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Word to PDF Converter</title>
+  <!-- Bulma CSS for minimal theme -->
+  <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
-    #uploadForm { margin-top: 50px; }
-    #downloadLink { display: none; margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+    #uploadForm {
+      margin-top: 50px;
+    }
+    #downloadLink {
+      display: none;
+      margin-top: 20px;
+    }
+    .loader {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>Convert Word to PDF</h1>
-  <form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" name="file" accept=".doc,.docx" required />
-    <button type="submit">Convert to PDF</button>
-  </form>
-  <div id="downloadLink">
-    <p>Conversion successful!</p>
-    <a id="pdfLink" href="#" download="converted.pdf">Download PDF</a>
+
+  <div class="container">
+    <h1 class="title has-text-centered">Convert Word to PDF</h1>
+
+    <!-- File upload form -->
+    <form id="uploadForm" enctype="multipart/form-data" class="box">
+      <div class="field">
+        <label class="label">Upload Word File (.doc, .docx)</label>
+        <div class="control">
+          <input class="input" type="file" name="file" accept=".doc,.docx" required />
+        </div>
+      </div>
+      <div class="control">
+        <button class="button is-link is-fullwidth" type="submit">Convert to PDF</button>
+      </div>
+    </form>
+
+    <!-- Loader animation -->
+    <div id="loader" class="loader has-text-centered">
+      <div class="spinner"></div>
+      <p>Converting...</p>
+    </div>
+
+    <!-- Download link -->
+    <div id="downloadLink">
+      <p>Conversion successful! Click the link below to download your PDF.</p>
+      <a id="pdfLink" class="button is-primary" href="#" download="converted.pdf">Download PDF</a>
+    </div>
+
+    <!-- Error message -->
+    <div id="errorMessage" style="display: none; color: red;">
+      <p>There was an error with the conversion. Please try again.</p>
+    </div>
   </div>
 
   <script>
     const form = document.getElementById("uploadForm");
     const downloadLink = document.getElementById("downloadLink");
     const pdfLink = document.getElementById("pdfLink");
+    const loader = document.getElementById("loader");
+    const errorMessage = document.getElementById("errorMessage");
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(form);
+      
+      // Show loader
+      loader.style.display = "block";
+      downloadLink.style.display = "none";
+      errorMessage.style.display = "none";
 
       try {
         const response = await fetch("/convert", {
@@ -42,11 +96,13 @@
           pdfLink.href = url;
           downloadLink.style.display = "block";
         } else {
-          alert("Conversion failed. Please try again.");
+          errorMessage.style.display = "block";
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("An error occurred. Please try again.");
+        errorMessage.style.display = "block";
+      } finally {
+        loader.style.display = "none";
       }
     });
   </script>
