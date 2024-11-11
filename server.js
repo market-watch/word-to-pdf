@@ -4,13 +4,15 @@ const libre = require("libreoffice-convert");
 const ExcelJS = require('exceljs');
 const fs = require("fs");
 const path = require("path");
-const { HfInference } = require('@huggingface/inference');
+const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
-// const hf = new HfInference(process.env.HUGGING_FACE_API_KEY); // Ensure API key is set as an environment variable
-const hf = "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"
+
+// Replace with your Hugging Face API token
+const HUGGING_FACE_API_KEY = "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";
+
 app.use(bodyParser.json()); // Parse JSON bodies
 
 // Serve index.html from root URL
@@ -58,7 +60,7 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
 
     workbooks.forEach((workbook) => {
       workbook.eachSheet((sheet) => {
-        sheet.eachRow((row, rowIndex) => {
+        sheet.eachRow((row) => {
           mergedSheet.addRow(row.values);
         });
       });
@@ -85,17 +87,26 @@ app.post("/summarize", async (req, res) => {
   }
 
   try {
-    const response = await hf.query({
-      model: 'Falconsai/text_summarization',
-      inputs: text,
+    const response = await fetch('https://api-inference.huggingface.co/models/Falconsai/text_summarization', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ inputs: text })
     });
 
-    res.json({ summary: response[0].summary_text });
+    if (!response.ok) {
+      const error = await response.json();
+      return res.status(response.status).json({ error: error.error || "Error with Hugging Face API" });
+    }
+
+    const result = await response.json();
+    res.json({ summary: result[0].summary_text });
   } catch (error) {
     res.status(500).send("Error in summarization: " + error.message);
   }
 });
-
 
 // Listen on the port defined by the environment variable (for Cloud Run)
 const port = process.env.PORT || 8080;
