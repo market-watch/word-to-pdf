@@ -85,16 +85,17 @@ app.post("/summarize", async (req, res) => {
   }
 
   try {
-    const response = await hf.textGeneration({
-      model: 'Falconsai/text_summarization',  // Replace with your specific Hugging Face model name if different
+    const response = await hf.query({
+      model: 'Falconsai/text_summarization',
       inputs: text,
     });
 
-    res.json({ summary: response.generated_text });
+    res.json({ summary: response[0].summary_text });
   } catch (error) {
     res.status(500).send("Error in summarization: " + error.message);
   }
 });
+
 
 // Listen on the port defined by the environment variable (for Cloud Run)
 const port = process.env.PORT || 8080;
