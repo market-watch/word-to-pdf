@@ -1,17 +1,15 @@
-// const fetch = require('node-fetch');  // Add this line
 const express = require("express");
 const multer = require("multer");
 const libre = require("libreoffice-convert");
 const ExcelJS = require('exceljs');
 const fs = require("fs");
 const path = require("path");
-const { HfInference } = require('@huggingface/inference');
+const { PDFDocument } = require("pdf-lib");
+
 const bodyParser = require('body-parser');
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
-const hf = new HfInference(process.env.HF_API_KEY);
-console.log("Hugging Face API Key:", process.env.HF_API_KEY);
 
 app.use(bodyParser.json()); // Parse JSON bodies
 
@@ -78,23 +76,32 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
   }
 });
 
-// Text summarization on POST request
-app.post("/summarize", async (req, res) => {
-  const { text } = req.body;
-  
-  if (!text) {
-    return res.status(400).send("No text provided for summarization.");
-  }
-
+// Merge PDF files on POST request
+app.post("/merge-pdf", upload.array("pdfs", 50), async (req, res) => {
   try {
-    const summary = await hf.summarization({
-      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name
-      inputs: text,
-    });
+    // Initialize PDFDocument to hold the merged PDFs
+    const mergedPdf = await PDFDocument.create();
 
-    res.json({ summary: summary.summary_text });
+    // Loop through each uploaded PDF
+    for (const file of req.files) {
+      const pdfBytes = fs.readFileSync(file.path);
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const pages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+      pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    // Write the merged PDF to a new file
+    const outputPath = path.join("/tmp", "merged.pdf");
+    const mergedPdfBytes = await mergedPdf.save();
+    fs.writeFileSync(outputPath, mergedPdfBytes);
+
+    // Send the merged PDF to the user for download
+    res.download(outputPath, "merged.pdf", () => {
+      req.files.forEach((file) => fs.unlinkSync(file.path));
+      fs.unlinkSync(outputPath);
+    });
   } catch (error) {
-    res.status(500).send("Error in summarization: " + error.message);
+    res.status(500).send("Error merging PDFs: " + error.message);
   }
 });
 
