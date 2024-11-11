@@ -9,8 +9,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
-const hf = new HfInference(process.env.HUGGING_FACE_API_KEY); // Ensure API key is set as an environment variable
-
+// const hf = new HfInference(process.env.HUGGING_FACE_API_KEY); // Ensure API key is set as an environment variable
+const hf = "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"
 app.use(bodyParser.json()); // Parse JSON bodies
 
 // Serve index.html from root URL
