@@ -4,15 +4,12 @@ const libre = require("libreoffice-convert");
 const ExcelJS = require('exceljs');
 const fs = require("fs");
 const path = require("path");
-const fetch = require('node-fetch');
+const { HfInference } = require('@huggingface/inference');
 const bodyParser = require('body-parser');
-
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
-
-// Replace with your Hugging Face API token
-const HUGGING_FACE_API_KEY = "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";
+const hf = new HfInference("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"); // Ensure API key is set as an environment variable
 
 app.use(bodyParser.json()); // Parse JSON bodies
 
@@ -61,7 +58,7 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
 
     workbooks.forEach((workbook) => {
       workbook.eachSheet((sheet) => {
-        sheet.eachRow((row) => {
+        sheet.eachRow((row, rowIndex) => {
           mergedSheet.addRow(row.values);
         });
       });
@@ -82,28 +79,18 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
 // Text summarization on POST request
 app.post("/summarize", async (req, res) => {
   const { text } = req.body;
-
+  
   if (!text) {
     return res.status(400).send("No text provided for summarization.");
   }
 
   try {
-    const response = await fetch('https://api-inference.huggingface.co/models/Falconsai/text_summarization', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ inputs: text })
+    const summary = await hf.summarization({
+      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name
+      inputs: text,
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      return res.status(response.status).json({ error: error.error || "Error with Hugging Face API" });
-    }
-
-    const result = await response.json();
-    res.json({ summary: result[0].summary_text });
+    res.json({ summary: summary.summary_text });
   } catch (error) {
     res.status(500).send("Error in summarization: " + error.message);
   }
