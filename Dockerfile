@@ -1,19 +1,17 @@
 # Use official Node.js image as base image
 FROM node:16-slim
 
-# Install LibreOffice dependencies and LibreOffice (headless version)
+# Install LibreOffice
 RUN apt-get update && \
-    apt-get install -y libreoffice libreoffice-common libreoffice-java-common \
-    && apt-get clean;
+    apt-get install -y libreoffice && \
+    apt-get clean;
 
 # Set working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the package.json files to install dependencies
+# Copy the project files into the container
 COPY package*.json ./
 RUN npm install
-
-# Copy the rest of the application files
 COPY . .
 
 # Expose the port
