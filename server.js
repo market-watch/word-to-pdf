@@ -79,18 +79,18 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
 // Text summarization on POST request
 app.post("/summarize", async (req, res) => {
   const { text } = req.body;
-  
+
   if (!text) {
     return res.status(400).send("No text provided for summarization.");
   }
 
   try {
-    const response = await hf.request({
-      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name if different
+    const response = await hf.textGeneration({
+      model: 'Falconsai/text_summarization',  // Replace with your specific Hugging Face model name if different
       inputs: text,
     });
 
-    res.json({ summary: response[0].summary_text });  // Extract summary text from response
+    res.json({ summary: response.generated_text });
   } catch (error) {
     res.status(500).send("Error in summarization: " + error.message);
   }
