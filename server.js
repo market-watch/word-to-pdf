@@ -85,12 +85,12 @@ app.post("/summarize", async (req, res) => {
   }
 
   try {
-    const summary = await hf.summarization({
-      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name
+    const response = await hf.request({
+      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name if different
       inputs: text,
     });
 
-    res.json({ summary: summary.summary_text });
+    res.json({ summary: response[0].summary_text });  // Extract summary text from response
   } catch (error) {
     res.status(500).send("Error in summarization: " + error.message);
   }
