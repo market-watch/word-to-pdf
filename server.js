@@ -4,9 +4,14 @@ const libre = require("libreoffice-convert");
 const ExcelJS = require('exceljs');
 const fs = require("fs");
 const path = require("path");
+const { HfInference } = require('@huggingface/inference');
+const bodyParser = require('body-parser');
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
+const hf = new HfInference(process.env.HUGGING_FACE_API_KEY); // Ensure API key is set as an environment variable
+
+app.use(bodyParser.json()); // Parse JSON bodies
 
 // Serve index.html from root URL
 app.get("/", (req, res) => {
@@ -37,12 +42,7 @@ app.post("/convert", upload.single("file"), (req, res) => {
   });
 });
 
-// Listen on the port defined by the environment variable (for Cloud Run)
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
+// Merge Excel files on POST request
 app.post("/merge-excel", upload.array("files"), async (req, res) => {
   try {
     const workbooks = await Promise.all(
@@ -76,6 +76,30 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
   }
 });
 
+// Text summarization on POST request
+app.post("/summarize", async (req, res) => {
+  const { text } = req.body;
+  
+  if (!text) {
+    return res.status(400).send("No text provided for summarization.");
+  }
 
+  try {
+    const summary = await hf.summarization({
+      model: 'Falconsai/text_summarization',  // Replace with your Hugging Face model name
+      inputs: text,
+    });
+
+    res.json({ summary: summary.summary_text });
+  } catch (error) {
+    res.status(500).send("Error in summarization: " + error.message);
+  }
+});
+
+// Listen on the port defined by the environment variable (for Cloud Run)
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 module.exports = app;
