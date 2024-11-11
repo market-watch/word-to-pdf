@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
 const hf = new HfInference(process.env.HF_API_KEY);
+console.log("Hugging Face API Key:", process.env.HF_API_KEY);
 
 app.use(bodyParser.json()); // Parse JSON bodies
 
