@@ -194,6 +194,62 @@
     });
   </script>
 
+
+
+
+  <div class="container">
+  <h1 class="title has-text-centered">Make Brief Facts</h1>
+
+  <div class="box">
+    <textarea id="inputText" class="textarea" placeholder="Enter text to summarize"></textarea>
+    <button id="summarizeButton" class="button is-link is-fullwidth" style="margin-top: 10px;">Summarize</button>
+  </div>
+
+  <div id="summaryOutput" class="notification is-primary" style="display: none;"></div>
+  <div id="errorOutput" class="notification is-danger" style="display: none;"></div>
+</div>
+
+<script>
+  const summarizeButton = document.getElementById("summarizeButton");
+  const inputText = document.getElementById("inputText");
+  const summaryOutput = document.getElementById("summaryOutput");
+  const errorOutput = document.getElementById("errorOutput");
+
+  summarizeButton.addEventListener("click", async () => {
+    const text = inputText.value.trim();
+
+    if (!text) {
+      errorOutput.style.display = "block";
+      errorOutput.textContent = "Please enter some text to summarize.";
+      return;
+    }
+
+    summaryOutput.style.display = "none";
+    errorOutput.style.display = "none";
+
+    try {
+      const response = await fetch("/summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        summaryOutput.style.display = "block";
+        summaryOutput.textContent = "Summary: " + data.summary;
+      } else {
+        throw new Error("Summarization failed");
+      }
+    } catch (error) {
+      errorOutput.style.display = "block";
+      errorOutput.textContent = "Error: " + error.message;
+    }
+  });
+</script>
+
   <!-- Footer -->
     <footer class="footer">
         <p>© Dheeraj Bhyan. All Rights Reserved.</p>
