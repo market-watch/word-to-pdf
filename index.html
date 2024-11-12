@@ -169,6 +169,36 @@
         </form>
       </div>
 
+      <!-- Merge Sheets Section -->
+      <div class="column is-one-third">
+        <form id="mergeSheetsForm" enctype="multipart/form-data" class="box">
+          <figure class="image is-64x64 has-text-centered">
+            <img src="excel_icon.png" alt="Excel Icon" class="icon-image">
+          </figure>
+          <h2 class="title is-5 has-text-centered">Merge Sheets of Excel File</h2>
+          <div class="field">
+            <label class="label">Upload Excel File (.xls, .xlsx)</label>
+            <div class="control">
+              <input class="input" type="file" name="file" accept=".xls,.xlsx" required />
+            </div>
+          </div>
+          <div class="control">
+            <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Merge Sheets of Excel File')">Merge Sheets</button>
+          </div>
+          <div id="mergeSheetsLoader" class="loader has-text-centered">
+            <div class="spinner"></div>
+            <p>Merging Sheets...</p>
+          </div>
+          <div id="mergeSheetsDownloadLink">
+            <p>Merging successful! Click the link below to download your merged file.</p>
+            <a id="mergedSheetsFileLink" class="button is-primary" href="#" download="merged_sheets.xlsx">Download Merged File</a>
+          </div>
+          <div id="mergeSheetsErrorMessage" style="display: none; color: red;">
+            <p>There was an error with the merging. Please try again.</p>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -187,9 +217,10 @@
   <script>
     document.getElementById("uploadForm").addEventListener("submit", (event) => handleSubmit(event, "uploadForm", "loader", "downloadLink", "pdfLink", "errorMessage", "/convert"));
     document.getElementById("mergeForm").addEventListener("submit", (event) => handleSubmit(event, "mergeForm", "mergeLoader", "mergeDownloadLink", "mergedFileLink", "mergeErrorMessage", "/merge-excel"));
-    document.getElementById("pdfMergeForm").addEventListener("submit", (event) => handleSubmit(event, "pdfMergeForm", "pdfMergeLoader", "pdfMergeDownloadLink", "pdfMergedFileLink", "pdfMergeErrorMessage", "/merge-pdf"));
+    document.getElementById("pdfMergeForm").addEventListener("submit", (event) => handleSubmit(event, "pdfMergeForm", "pdfMergeLoader", "pdfMergeDownloadLink", "pdfMergedFileLink", "pdfMergeErrorMessage", "https://merge-pdf-510003553016.us-central1.run.app/merge"));
     document.getElementById("imagePdfForm").addEventListener("submit", (event) => handleSubmit(event, "imagePdfForm", "imagePdfLoader", "imagePdfDownloadLink", "imagePdfFileLink", "imagePdfErrorMessage", "/images-to-pdf"));
-
+    document.getElementById("mergeSheetsForm").addEventListener("submit", (event) => handleSubmit(event,"mergeSheetsForm", "mergeSheetsLoader", "mergeSheetsDownloadLink", "mergedSheetsFileLink", "mergeSheetsErrorMessage", "/merge-sheets");
+  });
     function handleSubmit(event, formId, loaderId, downloadLinkId, fileLinkId, errorId, url) {
       event.preventDefault();
       const form = document.getElementById(formId);
