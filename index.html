@@ -135,6 +135,25 @@ h1.title:hover {
     transform: translateY(0);
   }
 }
+
+    /* Style to reduce font size and center-align text */
+h2.title.is-5.has-text-centered {
+  font-size: 18px; /* Adjust this value as needed */
+  text-align: center;
+}
+
+/* Style for form elements to reduce font size and center them */
+.label, .input {
+  font-size: 14px; /* Adjust the font size for labels and inputs */
+  text-align: center;
+  display: block; /* Ensures the text is centered within the element */
+  margin: 0 auto; /* Centers the form elements */
+}
+
+.input {
+  width: 80%; /* Optional: Adjust width for input elements */
+}
+
   </style>
 </head>
 <body>
@@ -272,7 +291,7 @@ h1.title:hover {
       <div class="column is-one-third">
         <form id="mergeSheetsForm" enctype="multipart/form-data" class="box">
           <figure class="image is-64x64 has-text-centered">
-            <img src="img/merge_sheets.gif" alt="merge sheets Icon" class="icon-image">
+            <img src="imgs/merge_sheets.gif" alt="merge sheets Icon" class="icon-image">
           </figure>
           <h2 class="title is-5 has-text-centered">Merge Sheets of Excel File</h2>
           <div class="field">
