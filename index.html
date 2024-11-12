@@ -32,7 +32,7 @@
       height: 40px;
       margin-bottom: 10px;
     }
-    #downloadLink, #mergeDownloadLink, #pdfMergeDownloadLink {
+    #downloadLink, #mergeDownloadLink, #pdfMergeDownloadLink, #imagePdfDownloadLink {
       display: none;
       margin-top: 20px;
     }
@@ -139,6 +139,36 @@
         </form>
       </div>
 
+      <!-- Image to PDF Conversion Section -->
+      <div class="column is-one-third">
+        <form id="imagePdfForm" enctype="multipart/form-data" class="box">
+          <figure class="image is-64x64 has-text-centered">
+            <img src="image_icon.png" alt="Image Icon" class="icon-image">
+          </figure>
+          <h2 class="title is-5 has-text-centered">Convert Images to PDF</h2>
+          <div class="field">
+            <label class="label">Upload Images (.jpg, .jpeg, .png)</label>
+            <div class="control">
+              <input class="input" type="file" name="images" accept=".jpg,.jpeg,.png" multiple required />
+            </div>
+          </div>
+          <div class="control">
+            <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Convert Images to PDF')">Convert to PDF</button>
+          </div>
+          <div id="imagePdfLoader" class="loader has-text-centered">
+            <div class="spinner"></div>
+            <p>Converting...</p>
+          </div>
+          <div id="imagePdfDownloadLink">
+            <p>Conversion successful! Click the link below to download your PDF.</p>
+            <a id="imagePdfFileLink" class="button is-primary" href="#" download="images_converted.pdf">Download PDF</a>
+          </div>
+          <div id="imagePdfErrorMessage" style="display: none; color: red;">
+            <p>There was an error with the conversion. Please try again.</p>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -153,51 +183,43 @@
     }
   </script>
 
-  <!-- JavaScript for handling form submissions (similar to previous approach) -->
+  <!-- JavaScript for handling form submissions -->
   <script>
-    document.getElementById("uploadForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      handleFormSubmit("uploadForm", "loader", "downloadLink", "pdfLink", "errorMessage", "/convert");
-    });
+    document.getElementById("uploadForm").addEventListener("submit", (event) => handleSubmit(event, "uploadForm", "loader", "downloadLink", "pdfLink", "errorMessage", "/convert"));
+    document.getElementById("mergeForm").addEventListener("submit", (event) => handleSubmit(event, "mergeForm", "mergeLoader", "mergeDownloadLink", "mergedFileLink", "mergeErrorMessage", "/merge-excel"));
+    document.getElementById("pdfMergeForm").addEventListener("submit", (event) => handleSubmit(event, "pdfMergeForm", "pdfMergeLoader", "pdfMergeDownloadLink", "pdfMergedFileLink", "pdfMergeErrorMessage", "/merge-pdf"));
+    document.getElementById("imagePdfForm").addEventListener("submit", (event) => handleSubmit(event, "imagePdfForm", "imagePdfLoader", "imagePdfDownloadLink", "imagePdfFileLink", "imagePdfErrorMessage", "/images-to-pdf"));
 
-    document.getElementById("mergeForm").addEventListener("submit", async (event) => {
+    function handleSubmit(event, formId, loaderId, downloadLinkId, fileLinkId, errorId, url) {
       event.preventDefault();
-      handleFormSubmit("mergeForm", "mergeLoader", "mergeDownloadLink", "mergedFileLink", "mergeErrorMessage", "/merge-excel");
-    });
-
-    document.getElementById("pdfMergeForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      handleFormSubmit("pdfMergeForm", "pdfMergeLoader", "pdfMergeDownloadLink", "pdfMergedFileLink", "pdfMergeErrorMessage", "https://merge-pdf-510003553016.us-central1.run.app/merge");
-    });
-
-    async function handleFormSubmit(formId, loaderId, downloadLinkId, fileLinkId, errorId, url) {
       const form = document.getElementById(formId);
       const loader = document.getElementById(loaderId);
       const downloadLink = document.getElementById(downloadLinkId);
       const fileLink = document.getElementById(fileLinkId);
       const errorMessage = document.getElementById(errorId);
-      const formData = new FormData(form);
-
+      
       loader.style.display = "block";
       downloadLink.style.display = "none";
       errorMessage.style.display = "none";
 
-      try {
-        const response = await fetch(url, { method: "POST", body: formData });
-        if (response.ok) {
-          const blob = await response.blob();
-          fileLink.href = URL.createObjectURL(blob);
+      const formData = new FormData(form);
+      fetch(url, { method: "POST", body: formData })
+        .then(response => {
+          if (!response.ok) throw new Error("Error");
+          return response.blob();
+        })
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          fileLink.href = url;
           loader.style.display = "none";
           downloadLink.style.display = "block";
-        } else {
-          throw new Error("Conversion failed");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        loader.style.display = "none";
-        errorMessage.style.display = "block";
-      }
+        })
+        .catch(() => {
+          loader.style.display = "none";
+          errorMessage.style.display = "block";
+        });
     }
   </script>
+
 </body>
 </html>
