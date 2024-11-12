@@ -8,6 +8,8 @@ const { PDFDocument } = require("pdf-lib");
 const bodyParser = require("body-parser");
 
 const app = express();
+// Serve static files from the 'imgs' folder
+app.use('/imgs', express.static(path.join(__dirname, 'imgs')));
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
 
 app.use(bodyParser.json()); // Parse JSON bodies
