@@ -17,12 +17,15 @@
 
   <!-- Bulma CSS for minimal theme -->
   <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
   /* Style for the background video */
 body, html {
   height: 100%;
   margin: 0;
+  background-color: rgba(255, 255, 255, 0);
+  font-family: 'Poppins', sans-serif;
 }
 
 #background-video {
@@ -46,16 +49,40 @@ body, html {
     border-radius: 10px; /* Optional: adds rounded corners */
   }
   
-  .box {
-    background-color: rgba(255, 255, 255, 0.8); /* White background with 80% opacity */
-    padding: 20px;
-    border-radius: 10px; /* Optional: adds rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: adds subtle shadow for depth */
-  }
+  /* Style for the box */
+    .box {
+      background-color: rgba(255, 255, 255, 0.9); /* Light translucent background */
+      padding: 30px;
+      border-radius: 12px;
+      width: 300px;
+      max-width: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+      animation: boxFadeIn 1.5s ease-in-out; /* Box fade-in animation */
+    }
+
+    /* Hover effect for the box */
+    .box:hover {
+      transform: translateY(-10px); /* Lift the box on hover */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+      background-color: rgba(255, 255, 255, 0.95); /* Slightly darker background on hover */
+    }
+
+    /* Animation for box fade-in */
+    @keyframes boxFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 /* Additional content styling */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  font-family: 'Poppins', sans-serif;
+  background-color: rgba(255, 255, 255, 0);
   padding: 20px;
 }
 
@@ -74,7 +101,40 @@ body {
   display: none;
   margin-top: 20px;
 }
+/* Style for the page title */
+h1.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3rem; /* Make the title larger */
+  font-weight: bold; /* Make the title bold */
+  color: #333; /* Dark color for the text */
+  text-align: center;
+  text-transform: uppercase; /* Makes the title uppercase */
+  letter-spacing: 4px; /* Adds spacing between letters */
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.7); /* Slight translucent white background */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  transition: all 0.3s ease-in-out; /* Smooth transition for hover effect */
+  animation: fadeIn 2s ease-out; /* Fade-in animation on load */
+}
 
+h1.title:hover {
+  color: #f39c12; /* Change text color on hover */
+  transform: scale(1.1); /* Slight scale-up effect on hover */
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3); /* Add shadow to text on hover */
+}
+
+/* Animation for fade-in */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   </style>
 </head>
 <body>
@@ -122,7 +182,7 @@ body {
       <div class="column is-one-third">
         <form id="mergeForm" enctype="multipart/form-data" class="box">
           <figure class="image is-64x64 has-text-centered">
-            <img src="excel_icon.png" alt="Excel Icon" class="icon-image">
+            <img src="imgs/merge_excel.gif" alt="merge Excel Icon" class="icon-image">
           </figure>
           <h2 class="title is-5 has-text-centered">Merge Excel Files</h2>
           <div class="field">
@@ -212,7 +272,7 @@ body {
       <div class="column is-one-third">
         <form id="mergeSheetsForm" enctype="multipart/form-data" class="box">
           <figure class="image is-64x64 has-text-centered">
-            <img src="excel_icon.png" alt="Excel Icon" class="icon-image">
+            <img src="img/merge_sheets.gif" alt="merge sheets Icon" class="icon-image">
           </figure>
           <h2 class="title is-5 has-text-centered">Merge Sheets of Excel File</h2>
           <div class="field">
