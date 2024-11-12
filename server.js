@@ -1,12 +1,11 @@
 const express = require("express");
 const multer = require("multer");
 const libre = require("libreoffice-convert");
-const ExcelJS = require('exceljs');
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument } = require("pdf-lib");
-
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 
 const app = express();
 const upload = multer({ dest: "/tmp" }); // Use /tmp for serverless compatibility
@@ -73,6 +72,48 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
     });
   } catch (error) {
     res.status(500).send("Error merging files: " + error.message);
+  }
+});
+
+// Convert images to PDF on POST request
+app.post("/images-to-pdf", upload.array("images", 100), async (req, res) => {
+  try {
+    const pdfDoc = await PDFDocument.create();
+
+    for (const file of req.files) {
+      const imageBytes = fs.readFileSync(file.path);
+      let img;
+
+      // Embed the image based on its MIME type
+      if (file.mimetype === "image/jpeg") {
+        img = await pdfDoc.embedJpg(imageBytes);
+      } else if (file.mimetype === "image/png") {
+        img = await pdfDoc.embedPng(imageBytes);
+      } else {
+        console.error(`Unsupported file format: ${file.originalname}`);
+        continue;
+      }
+
+      const { width, height } = img;
+      const page = pdfDoc.addPage([width, height]);
+      page.drawImage(img, {
+        x: 0,
+        y: 0,
+        width: width,
+        height: height,
+      });
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    const outputPath = path.join("/tmp", "images.pdf");
+    fs.writeFileSync(outputPath, pdfBytes);
+
+    res.download(outputPath, "images.pdf", () => {
+      req.files.forEach((file) => fs.unlinkSync(file.path)); // Cleanup uploaded images
+      fs.unlinkSync(outputPath); // Cleanup PDF
+    });
+  } catch (error) {
+    res.status(500).send("Error converting images to PDF: " + error.message);
   }
 });
 
