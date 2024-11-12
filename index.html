@@ -73,7 +73,7 @@
     <!-- Download link for DOCX conversion -->
     <div id="downloadLink">
       <p>Conversion successful! Click the link below to download your PDF.</p>
-      <a id="pdfLink" class="button is-primary" href="#" download="converted.pdf">Download PDF</a>
+      <a id="pdfLink" class="button is-primary" href="#" download="converted.pdf" onclick="trackDownloadEvent('Download PDF')">Download PDF</a>
     </div>
 
     <!-- Error message for DOCX conversion -->
@@ -107,15 +107,25 @@
     <!-- Download link for merged Excel file -->
     <div id="mergeDownloadLink">
       <p>Merge successful! Click the link below to download your merged Excel file.</p>
-      <a id="mergedFileLink" class="button is-primary" href="#" download="merged.xlsx">Download Merged File</a>
+      <a id="mergedFileLink" class="button is-primary" href="#" download="merged.xlsx" onclick="trackDownloadEvent('Download Merged File')">Download Merged File</a>
     </div>
-
     <!-- Error message for Excel merging -->
     <div id="mergeErrorMessage" style="display: none; color: red;">
       <p>There was an error with the merging. Please try again.</p>
     </div>
   </div>
 
+  <script>
+    function trackDownloadEvent(label) {
+      gtag('event', 'click', {
+        'event_category': 'download',
+        'event_label': label,
+        'value': 1
+      });
+    }
+  </script>
+
+  
   <script>
     const form = document.getElementById("uploadForm");
     const downloadLink = document.getElementById("downloadLink");
