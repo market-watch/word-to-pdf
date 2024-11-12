@@ -117,6 +117,51 @@ app.post("/images-to-pdf", upload.array("images", 100), async (req, res) => {
   }
 });
 
+// Endpoint to merge sheets in a single Excel file into one
+app.post('/merge-sheets', upload.single('file'), async (req, res) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(req.file.path);
+
+    // Create a new workbook for the merged output
+    const mergedWorkbook = new ExcelJS.Workbook();
+    const mergedSheet = mergedWorkbook.addWorksheet('Merged Sheet');
+
+    // Track the starting row for each sheet’s data
+    let rowIndex = 1;
+
+    // Loop through each worksheet and add its data to the merged sheet
+    workbook.eachSheet((worksheet) => {
+      worksheet.eachRow((row) => {
+        row.eachCell((cell, colIndex) => {
+          mergedSheet.getCell(rowIndex, colIndex).value = cell.value;
+        });
+        rowIndex++; // Move to the next row in merged sheet
+      });
+    });
+
+    // Set up a file path for the merged output
+    const outputPath = path.join('/tmp', 'merged_sheets.xlsx');
+    await mergedWorkbook.xlsx.writeFile(outputPath);
+
+    // Send the merged file as a response
+    res.download(outputPath, 'merged_sheets.xlsx', (err) => {
+      if (err) {
+        console.error("Error sending merged file:", err);
+        res.status(500).send('File download failed');
+      }
+
+      // Clean up the uploaded file and the merged file after response is sent
+      fs.unlinkSync(req.file.path); // Remove the uploaded file
+      fs.unlinkSync(outputPath); // Remove the merged file
+    });
+  } catch (error) {
+    console.error("Error merging sheets:", error);
+    res.status(500).json({ error: 'Failed to merge sheets' });
+  }
+});
+
+
 // Listen on the port defined by the environment variable (for Cloud Run)
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
