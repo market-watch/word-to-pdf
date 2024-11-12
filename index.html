@@ -219,7 +219,7 @@
     document.getElementById("mergeForm").addEventListener("submit", (event) => handleSubmit(event, "mergeForm", "mergeLoader", "mergeDownloadLink", "mergedFileLink", "mergeErrorMessage", "/merge-excel"));
     document.getElementById("pdfMergeForm").addEventListener("submit", (event) => handleSubmit(event, "pdfMergeForm", "pdfMergeLoader", "pdfMergeDownloadLink", "pdfMergedFileLink", "pdfMergeErrorMessage", "https://merge-pdf-510003553016.us-central1.run.app/merge"));
     document.getElementById("imagePdfForm").addEventListener("submit", (event) => handleSubmit(event, "imagePdfForm", "imagePdfLoader", "imagePdfDownloadLink", "imagePdfFileLink", "imagePdfErrorMessage", "/images-to-pdf"));
-    document.getElementById("mergeSheetsForm").addEventListener("submit", (event) => handleSubmit(event,"mergeSheetsForm", "mergeSheetsLoader", "mergeSheetsDownloadLink", "mergedSheetsFileLink", "mergeSheetsErrorMessage", "/merge-sheets");
+    document.getElementById("mergeSheetsForm").addEventListener("submit", (event) => handleSubmit(event,"mergeSheetsForm", "mergeSheetsLoader", "mergeSheetsDownloadLink", "mergedSheetsFileLink", "mergeSheetsErrorMessage", "/merge-sheets"));
   });
     function handleSubmit(event, formId, loaderId, downloadLinkId, fileLinkId, errorId, url) {
       event.preventDefault();
