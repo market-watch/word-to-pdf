@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const libre = require("libreoffice-convert");
-const { Workbook, stream } = require("exceljs"); // Require excelj
+const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument } = require("pdf-lib");
@@ -43,34 +43,39 @@ app.post("/convert", upload.single("file"), (req, res) => {
   });
 });
 
-// POST route to merge excel files
+// Merge Excel files on POST request
 app.post("/merge-excel", upload.array("files"), async (req, res) => {
   try {
-    const mergedWorkbook = new Workbook();
+    const workbooks = await Promise.all(
+      req.files.map(async (file) => {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(file.path);
+        return workbook;
+      })
+    );
+
+    const mergedWorkbook = new ExcelJS.Workbook();
     const mergedSheet = mergedWorkbook.addWorksheet("Merged Data");
 
-    // Iterate over the uploaded files and merge them into one workbook
-    for (const file of req.files) {
-      const workbook = new stream.xlsx.WorkbookReader(file.path);
-      for await (const sheet of workbook) {
-        for await (const row of sheet) {
+    workbooks.forEach((workbook) => {
+      workbook.eachSheet((sheet) => {
+        sheet.eachRow((row, rowIndex) => {
           mergedSheet.addRow(row.values);
-        }
-      }
-    }
+        });
+      });
+    });
 
-    const outputPath = path.join(__dirname, "/tmp", "merged.xlsx");
+    const outputPath = path.join("/tmp", "merged.xlsx");
     await mergedWorkbook.xlsx.writeFile(outputPath);
 
     res.download(outputPath, "merged.xlsx", () => {
-      req.files.forEach((file) => fs.unlinkSync(file.path)); // Delete uploaded files
-      fs.unlinkSync(outputPath); // Delete merged file after download
+      req.files.forEach((file) => fs.unlinkSync(file.path));
+      fs.unlinkSync(outputPath);
     });
   } catch (error) {
     res.status(500).send("Error merging files: " + error.message);
   }
 });
-
 
 // Convert images to PDF on POST request
 app.post("/images-to-pdf", upload.array("images", 100), async (req, res) => {
