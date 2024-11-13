@@ -59,7 +59,7 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
       }
     }
 
-    const outputPath = path.join(__dirname, "uploads", "merged.xlsx");
+    const outputPath = path.join(__dirname, "/tmp", "merged.xlsx");
     await mergedWorkbook.xlsx.writeFile(outputPath);
 
     res.download(outputPath, "merged.xlsx", () => {
