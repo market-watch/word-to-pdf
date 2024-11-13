@@ -157,6 +157,33 @@ h2.title.is-5.has-text-centered {
   margin: 0 auto;
 }
 
+.spinner-2 {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border-radius: 50%;
+  background: conic-gradient(#25b09b 25%,#f03355 0 50%,#514b82 0 75%,#ffa516 0);
+  animation: s2 2s infinite linear;
+}
+.spinner-2::before,
+.spinner-2::after {
+   content: "";
+   grid-area: 1/1;
+   margin: 15%;
+   border-radius: 50%;
+   background: inherit;
+   animation: inherit;
+}
+.spinner-2::after {
+   margin: 25%;
+   animation-duration: 3s;
+}
+
+@keyframes s2 {
+  100% {transform: rotate(1turn)}
+}
+
+
   </style>
 </head>
 <body>
@@ -187,8 +214,9 @@ h2.title.is-5.has-text-centered {
             <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Convert Word to PDF')">Convert to PDF</button>
           </div>
           <div id="loader" class="loader has-text-centered">
-            <div class="spinner"></div>
-            <p>Converting...</p>
+<!--             <div class="spinner"></div>
+            <p>Converting...</p> -->
+            <div class="spinner-2"></div>
           </div>
           <div id="downloadLink">
             <p>Conversion successful! Click the link below to download your PDF.</p>
@@ -217,8 +245,9 @@ h2.title.is-5.has-text-centered {
             <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Merge Excel Files')">Merge Files</button>
           </div>
           <div id="mergeLoader" class="loader has-text-centered">
-            <div class="spinner"></div>
-            <p>Merging...</p>
+<!--             <div class="spinner"></div>
+            <p>Merging...</p> -->
+            <div class="spinner-2"></div>
           </div>
           <div id="mergeDownloadLink">
             <p>Merge successful! Click the link below to download your merged file.</p>
@@ -247,8 +276,9 @@ h2.title.is-5.has-text-centered {
             <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Merge PDF Files')">Merge PDFs</button>
           </div>
           <div id="pdfMergeLoader" class="loader has-text-centered">
-            <div class="spinner"></div>
-            <p>Merging...</p>
+<!--             <div class="spinner"></div>
+            <p>Merging...</p> -->
+            <div class="spinner-2"></div>
           </div>
           <div id="pdfMergeDownloadLink">
             <p>Merge successful! Click the link below to download your merged PDF.</p>
@@ -277,8 +307,9 @@ h2.title.is-5.has-text-centered {
             <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Convert Images to PDF')">Convert to PDF</button>
           </div>
           <div id="imagePdfLoader" class="loader has-text-centered">
-            <div class="spinner"></div>
-            <p>Converting...</p>
+<!--             <div class="spinner"></div>
+            <p>Converting...</p> -->
+            <div class="spinner-2"></div>
           </div>
           <div id="imagePdfDownloadLink">
             <p>Conversion successful! Click the link below to download your PDF.</p>
@@ -307,8 +338,9 @@ h2.title.is-5.has-text-centered {
             <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Merge Sheets of Excel File')">Merge Sheets</button>
           </div>
           <div id="mergeSheetsLoader" class="loader has-text-centered">
-            <div class="spinner"></div>
-            <p>Merging Sheets...</p>
+<!--             <div class="spinner"></div>
+            <p>Merging Sheets...</p> -->
+            <div class="spinner-2"></div>
           </div>
           <div id="mergeSheetsDownloadLink">
             <p>Merging successful! Click the link below to download your merged file.</p>
