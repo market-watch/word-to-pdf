@@ -171,7 +171,7 @@ h2.title.is-5.has-text-centered {
 .spinner-2::after {
    content: "";
    grid-area: 1/1;
-   display: grid;
+/*    display: grid; */
    margin: 15%;
    border-radius: 50%;
    background: inherit;
@@ -179,7 +179,7 @@ h2.title.is-5.has-text-centered {
 }
 .spinner-2::after {
    margin: 25%;
-    display: grid;
+/*     display: grid; */
    animation-duration: 3s;
 }
 
@@ -386,7 +386,7 @@ h2.title.is-5.has-text-centered {
       const fileLink = document.getElementById(fileLinkId);
       const errorMessage = document.getElementById(errorId);
       
-      loader.style.display = "block";
+      loader.style.display = "grid";
       downloadLink.style.display = "none";
       errorMessage.style.display = "none";
 
