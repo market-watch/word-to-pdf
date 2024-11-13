@@ -59,7 +59,7 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
       }
     }
 
-    const outputPath = path.join(__dirname, "/tmp", "merged.xlsx");
+    const outputPath = path.join(__dirname, "uploads", "merged.xlsx");
     await mergedWorkbook.xlsx.writeFile(outputPath);
 
     res.download(outputPath, "merged.xlsx", () => {
@@ -71,17 +71,6 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
   }
 });
 
-    const outputPath = path.join("/tmp", "merged.xlsx");
-    await mergedWorkbook.xlsx.writeFile(outputPath);
-
-    res.download(outputPath, "merged.xlsx", () => {
-      req.files.forEach((file) => fs.unlinkSync(file.path));
-      fs.unlinkSync(outputPath);
-    });
-  } catch (error) {
-    res.status(500).send("Error merging files: " + error.message);
-  }
-});
 
 // Convert images to PDF on POST request
 app.post("/images-to-pdf", upload.array("images", 100), async (req, res) => {
