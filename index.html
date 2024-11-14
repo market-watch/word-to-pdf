@@ -370,6 +370,78 @@ h2.title.is-5.has-text-centered {
     }
   </script>
 
+  <script>
+  function trackButtonVisibility() {
+    // Select all elements with the class 'button is-primary'
+    const targetElements = document.querySelectorAll('.button.is-primary');
+    if (!targetElements.length) return; // Exit if no elements are found
+
+    // Intersection Observer callback function
+    const observerCallback = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Element is visible, send event to Google Analytics
+          gtag('event', 'button_visible', {
+            event_category: 'Button Tracking',
+            event_label: 'Primary Button Visible',
+          });
+          // Stop observing this element to prevent duplicate events if needed
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    // Set up Intersection Observer
+    const observerOptions = {
+      threshold: 0.5, // Trigger when 50% of the element is visible
+    };
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe each target element
+    targetElements.forEach((el) => observer.observe(el));
+  }
+
+  // Initialize tracking after the DOM is fully loaded
+  window.addEventListener('DOMContentLoaded', trackButtonVisibility);
+</script>
+
+<script>
+  function trackErrorVisibility() {
+    // Select all <p> elements and filter for those containing the phrase "There was an error"
+    const targetElements = Array.from(document.querySelectorAll('p')).filter((el) =>
+      el.textContent.includes('There was an error')
+    );
+    if (!targetElements.length) return; // Exit if no matching elements are found
+
+    // Intersection Observer callback function
+    const observerCallback = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Element is visible, send event to Google Analytics
+          gtag('event', 'error_message_visible', {
+            event_category: 'Error Tracking',
+            event_label: 'Error Message Displayed',
+          });
+          // Stop observing this element to prevent duplicate events if needed
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    // Set up Intersection Observer
+    const observerOptions = {
+      threshold: 0.5, // Trigger when 50% of the element is visible
+    };
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe each target element
+    targetElements.forEach((el) => observer.observe(el));
+  }
+
+  // Initialize tracking after the DOM is fully loaded
+  window.addEventListener('DOMContentLoaded', trackErrorVisibility);
+</script>
+
   <!-- JavaScript for handling form submissions -->
   <script>
     document.getElementById("uploadForm").addEventListener("submit", (event) => handleSubmit(event, "uploadForm", "loader", "downloadLink", "pdfLink", "errorMessage", "/convert"));
