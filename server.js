@@ -19,6 +19,12 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// Serve ghazal_search.html at /ghazal_search.html
+app.get("/ghazal_search.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "ghazal_search.html"));
+});
+
+
 // Convert Word to PDF on POST request
 app.post("/convert", upload.single("file"), (req, res) => {
   const filePath = req.file.path;
