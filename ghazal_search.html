@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghazal Search</title>
+    <link rel="icon" href="https://images.pexels.com/photos/261450/pexels-photo-261450.jpeg" type="image/jpeg">
+    <style>
+        /* Body and general page styling */
+        body {
+            font-family: 'Kufam', sans-serif; /* Updated Hindi font */
+            padding: 20px;
+            margin: 0;
+            background-color: #f7f7f7;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        /* Background video styling */
+        video.background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Behind the content */
+            opacity: 0.5;
+        }
+
+        /* Title */
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            width: auto;
+            max-width: 100%; /* Ensure it doesn't exceed the width of the parent container */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* File upload and search input styling */
+        input[type="file"], input[type="text"] {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 500px; /* Limit width */
+            box-sizing: border-box; /* Ensures padding is included in the width */
+        }
+
+        /* Make the input fields responsive on smaller screens */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 28px; /* Adjust title font size for smaller screens */
+            }
+
+            input[type="file"], input[type="text"] {
+                width: 90%; /* Make input fields take up 90% of the screen on small screens */
+                max-width: 100%; /* Allow full width for small screens */
+            }
+        }
+
+        /* Search results container */
+        #results {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+            max-height: 60vh; /* Limit the height of results */
+            overflow-y: auto; /* Make it scrollable */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px; /* Add padding to the left and right of the search container */
+        }
+
+        /* Styling for individual gazals */
+        .gazal {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            width: 100%;
+            max-width: 800px; /* Limit width */
+            word-wrap: break-word; /* Wrap long text */
+        }
+
+
+        /* Hover and click effect on gazals */
+        .gazal:hover {
+            transform: scale(1.02);
+            background-color: #f5f5f5;
+        }
+
+        .gazal.clicked {
+            transform: scale(1.02);
+            background-color: #ffe600;
+            color: #333;
+        }
+
+        /* Styling for paragraphs inside gazals */
+        .gazal p {
+            margin: 0;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* Adding the Hindi Calligraphy font */
+        @import url('https://fonts.googleapis.com/css2?family=Kufam&display=swap'); /* Alternative Hindi font */
+    </style>
+</head>
+<body>
+
+    <!-- Background video -->
+    <video class="background-video" autoplay muted loop>
+        <source src="https://videos.pexels.com/video-files/6918503/6918503-uhd_1440_2732_25fps.mp4"> <!-- Replace with your webm link -->
+        Your browser does not support the video tag.
+    </video>
+
+    <h1>Ghazal Search</h1>
+
+    <!-- File upload and search input -->
+    <input type="file" id="fileInput" accept=".txt" onchange="readFile(event)">
+    <input type="text" id="searchInput" placeholder="Search for a word..." onkeyup="searchText()">
+
+    <!-- Results section -->
+    <div id="results"></div>
+
+    <script>
+(function(_0x4d8060,_0x46bde3){const _0x11dd7d=_0x10fc,_0x186230=_0x4d8060();while(!![]){try{const _0x48ae4a=-parseInt(_0x11dd7d(0x187))/0x1*(-parseInt(_0x11dd7d(0x18b))/0x2)+parseInt(_0x11dd7d(0x173))/0x3*(-parseInt(_0x11dd7d(0x196))/0x4)+-parseInt(_0x11dd7d(0x195))/0x5+-parseInt(_0x11dd7d(0x17e))/0x6*(-parseInt(_0x11dd7d(0x18a))/0x7)+-parseInt(_0x11dd7d(0x183))/0x8*(parseInt(_0x11dd7d(0x181))/0x9)+-parseInt(_0x11dd7d(0x194))/0xa+parseInt(_0x11dd7d(0x175))/0xb;if(_0x48ae4a===_0x46bde3)break;else _0x186230['push'](_0x186230['shift']());}catch(_0x1dbfca){_0x186230['push'](_0x186230['shift']());}}}(_0x4230,0x599b0));function _0x4230(){const _0x5ad14d=['trim','534flKxXX','toggle','getElementById','171LrngNY','filter','56920bFdxXy','gazal','appendChild','target','493267SdWlXX','searchInput','classList','34363BnIWco','2KLsvns','forEach','<p>No\x20gazals\x20found\x20matching\x20your\x20search.</p>','results','innerHTML','value','createElement','readAsText','replace','7328300zOjyIE','3491205tmWzgl','44dYBiul','toLowerCase','textContent','split','32907yMThUb','onload','12361481pNqdJb','addEventListener','clicked','files','add','includes','div','click'];_0x4230=function(){return _0x5ad14d;};return _0x4230();}let gazals=[];function readFile(_0x18c7ed){const _0x3abf15=_0x10fc,_0x4767fa=_0x18c7ed[_0x3abf15(0x186)][_0x3abf15(0x178)][0x0],_0x587008=new FileReader();_0x587008[_0x3abf15(0x174)]=function(_0x2eb342){const _0x1c3334=_0x3abf15,_0x289e44=_0x2eb342[_0x1c3334(0x186)]['result'];gazals=_0x289e44[_0x1c3334(0x172)](')))))))')['filter'](_0x2b14d4=>_0x2b14d4[_0x1c3334(0x17d)]()!=='');},_0x587008[_0x3abf15(0x192)](_0x4767fa);}function _0x10fc(_0x62425b,_0x529bd5){const _0x42303b=_0x4230();return _0x10fc=function(_0x10fc72,_0x340f7e){_0x10fc72=_0x10fc72-0x170;let _0x1c8ab2=_0x42303b[_0x10fc72];return _0x1c8ab2;},_0x10fc(_0x62425b,_0x529bd5);}function displayResults(_0xff4b9f){const _0x5b44c8=_0x10fc,_0x46bb8e=document[_0x5b44c8(0x180)]('results');_0x46bb8e['innerHTML']='';if(_0xff4b9f['length']===0x0){_0x46bb8e[_0x5b44c8(0x18f)]=_0x5b44c8(0x18d);return;}_0xff4b9f[_0x5b44c8(0x18c)](_0x296b37=>{const _0x2950c1=_0x5b44c8,_0x3116cc=_0x296b37[_0x2950c1(0x193)](/[0-9A-Za-zред.,;:"'!?@#$%^&*()_+=<>|{}\[\]~`/-]/g,'')[_0x2950c1(0x193)](/\s+/g,'\x20')[_0x2950c1(0x17d)](),_0x435e52=document[_0x2950c1(0x191)](_0x2950c1(0x17b));_0x435e52['classList'][_0x2950c1(0x179)](_0x2950c1(0x184));const _0x2087eb=document[_0x2950c1(0x191)]('p');_0x2087eb[_0x2950c1(0x171)]=_0x3116cc,_0x435e52[_0x2950c1(0x185)](_0x2087eb),_0x435e52[_0x2950c1(0x176)](_0x2950c1(0x17c),()=>{const _0x1c58cb=_0x2950c1;_0x435e52[_0x1c58cb(0x189)][_0x1c58cb(0x17f)](_0x1c58cb(0x177));}),_0x46bb8e['appendChild'](_0x435e52);});}function searchText(){const _0x581b4e=_0x10fc,_0x5f1393=document['getElementById'](_0x581b4e(0x188))[_0x581b4e(0x190)][_0x581b4e(0x17d)]()[_0x581b4e(0x170)]();if(_0x5f1393===''){document[_0x581b4e(0x180)](_0x581b4e(0x18e))[_0x581b4e(0x18f)]='';return;}const _0x2e6e29=gazals[_0x581b4e(0x182)](_0x49911e=>_0x49911e[_0x581b4e(0x170)]()[_0x581b4e(0x17a)](_0x5f1393));displayResults(_0x2e6e29);}
+    </script>
+
+</body>
+</html>
