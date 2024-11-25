@@ -233,35 +233,52 @@ h2.title.is-5.has-text-centered {
       </div>
 
       <!-- Excel Files Merging Section -->
-      <div class="column is-one-third">
-        <form id="mergeForm" enctype="multipart/form-data" class="box">
-          <figure class="image is-64x64 has-text-centered">
-            <img src="imgs/merge_excel.gif" alt="merge Excel Icon" class="icon-image">
-          </figure>
-          <h2 class="title is-5 has-text-centered">Merge Excel Files</h2>
-          <div class="field">
-            <label class="label">Upload Excel Files (.xls, .xlsx)</label>
-            <div class="control">
-              <input class="input" type="file" name="files" accept=".xls,.xlsx" multiple required />
-            </div>
-          </div>
-          <div class="control">
-            <button class="button is-link is-fullwidth" type="submit" onclick="trackDownloadEvent('Merge Excel Files')">Merge Files</button>
-          </div>
-          <div id="mergeLoader" class="spinner-2 has-text-centered">
-<!--             <div class="spinner"></div>
-            <p>Merging...</p> -->
-<!--             <div class="spinner-2"></div> -->
-          </div>
-          <div id="mergeDownloadLink">
-            <p>Merge successful! Click the link below to download your merged file.</p>
-            <a id="mergedFileLink" class="button is-primary" href="#" download="merged.xlsx">Download Merged File</a>
-          </div>
-          <div id="mergeErrorMessage" style="display: none; color: red;">
-            <p>There was an error with the merging. Please try again.</p>
-          </div>
-        </form>
+<div class="column is-one-third">
+  <form id="mergeForm" enctype="multipart/form-data" class="box">
+    <figure class="image is-64x64 has-text-centered">
+      <img src="imgs/merge_excel.gif" alt="merge Excel Icon" class="icon-image">
+    </figure>
+    <h2 class="title is-5 has-text-centered">Merge Excel Files</h2>
+    <div class="field">
+      <label class="label">Upload Excel Files (.xls, .xlsx)</label>
+      <div class="control">
+        <input class="input" type="file" name="files" accept=".xls,.xlsx" multiple required />
       </div>
+    </div>
+    <div class="field">
+      <label class="label">Sheet Number</label>
+      <div class="control">
+        <input 
+          class="input" 
+          type="number" 
+          name="sheetNumber" 
+          placeholder="Enter sheet number (1 for first sheet, etc.)" 
+          required 
+          min="1" 
+        />
+      </div>
+    </div>
+    <div class="control">
+      <button 
+        class="button is-link is-fullwidth" 
+        type="submit" 
+        onclick="trackDownloadEvent('Merge Excel Files')">
+        Merge Files
+      </button>
+    </div>
+    <div id="mergeLoader" class="spinner-2 has-text-centered" style="display: none;">
+      <p>Merging...</p>
+    </div>
+    <div id="mergeDownloadLink" style="display: none;">
+      <p>Merge successful! Click the link below to download your merged file.</p>
+      <a id="mergedFileLink" class="button is-primary" href="#" download="merged.xlsx">Download Merged File</a>
+    </div>
+    <div id="mergeErrorMessage" style="display: none; color: red;">
+      <p>There was an error with the merging. Please try again.</p>
+    </div>
+  </form>
+</div>
+
 
       <!-- PDF Merging Section -->
       <div class="column is-one-third">
