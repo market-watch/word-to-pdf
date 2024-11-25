@@ -51,21 +51,15 @@ app.post("/convert", upload.single("file"), (req, res) => {
 
 app.post("/merge-excel", upload.array("files"), async (req, res) => {
   try {
-    const { sheetNumbers } = req.body; // Read the sheet numbers from the request body
+    const { sheetNumber } = req.body; // Read the sheet number from the request body
 
-    if (!sheetNumbers) {
-      return res.status(400).send("Sheet numbers are required.");
-    }
-
-    const sheetNumberArray = Array.isArray(sheetNumbers)
-      ? sheetNumbers.map((num) => parseInt(num, 10))
-      : [parseInt(sheetNumbers, 10)];
-
-    if (sheetNumberArray.some(isNaN) || sheetNumberArray.some((num) => num <= 0)) {
+    if (!sheetNumber || isNaN(sheetNumber) || sheetNumber <= 0) {
       return res
         .status(400)
-        .send("Invalid sheet numbers. Ensure all are positive integers.");
+        .send("Invalid or missing sheet number. Provide a positive integer.");
     }
+
+    const sheetIndex = parseInt(sheetNumber, 10) - 1; // Convert to zero-based index
 
     const workbooks = await Promise.all(
       req.files.map(async (file) => {
@@ -79,12 +73,11 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
     const mergedSheet = mergedWorkbook.addWorksheet("Merged Data");
 
     workbooks.forEach((workbook, index) => {
-      const sheetIndex = sheetNumberArray[index] - 1; // Convert to zero-based index
       const sheet = workbook.worksheets[sheetIndex];
 
       if (!sheet) {
         console.warn(
-          `Sheet number ${sheetNumberArray[index]} not found in file ${req.files[index].originalname}`
+          `Sheet number ${sheetNumber} not found in file ${req.files[index].originalname}`
         );
         return; // Skip this file if the sheet doesn't exist
       }
@@ -105,6 +98,7 @@ app.post("/merge-excel", upload.array("files"), async (req, res) => {
     res.status(500).send("Error merging files: " + error.message);
   }
 });
+
 
 // Convert images to PDF on POST request
 app.post("/images-to-pdf", upload.array("images", 100), async (req, res) => {
